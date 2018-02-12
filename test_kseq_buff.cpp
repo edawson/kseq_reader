@@ -9,26 +9,28 @@ int main(){
         KSEQ_Reader ksr;
         cout << "Test 1: constructor pass" << endl;
     }
-    string k ("SRR4074258.fastq.gz");
+    string k ("small.fq.gz");
     KSEQ_Reader g;
     g.open(k);
-    int bs = 200;
+    int bs = 110;
     g.buffer_size(bs);
     cout << "Test 2: constructor 2 pass. Bsize: " << g.buffer_size() << endl;
     ksequence_t seq;
-    int r = g.next(seq);
-    cout << "Test 3: next(): " << r << " " << endl;
-    cout << "Test sequence: " << seq.name << "\n" <<
-    seq.sequence << " successful, seqlen " << seq.length << endl;
-    // ksequence_t* kpt;
-    // int kpt_num;
-    // int l = g.get_next_buff(kpt, kpt_num);
-    // while (l){
-    //     l = g.get_next_buff(kpt, kpt_num);
-    //     for (int i = 0; i < kpt_num; i++){
-    //         cout << (*(kpt + i)).sequence << endl;
-    //     }
-    // }
+    //int r = g.next(seq);
+    //cout << "Test 3: next(): " << r << " " << endl;
+    //cout << "Test sequence: " << seq.name << "\n" <<
+    //seq.sequence << " successful, seqlen " << seq.length << endl;
+    ksequence_t* kpt;
+    int kpt_num;
+    //int l = g.get_next_buff(kpt, kpt_num);
+    //cerr << l << " kpt " << kpt_num << endl;
+    int l = 0;
+    while (l == 0){
+        l = g.get_next_buff(kpt, kpt_num);
+        for (int i = 0; i < kpt_num; i++){
+            cout << (kpt + i)->name << endl;
+        }
+    }
     
 
 return 0;

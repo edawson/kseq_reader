@@ -22,6 +22,11 @@ namespace KSR{
 
         int KSEQ_Reader::read(){
 
+            if (finished){
+                this->buff_len = 0;
+                this->curr_pos = 0;
+                return 1;
+            }
             /** If our buffer hasn't been
              * initialized, set some variables for safety
              * and allocate memory
@@ -41,6 +46,8 @@ namespace KSR{
                 this->buff_len = 0;
             }
 
+
+
             /** If our buffer is full,
              *  reset our variables. We
              *  might want to flush our
@@ -53,16 +60,13 @@ namespace KSR{
                 this->buff_len = 0;
             }
             
+            int ks_stat = 0;
             while (this->buff_len < b_size && 
-                    kseq_read(kseq) >= 0){
-                
-                        cerr << kseq->name.s << endl;
+            (ks_stat = kseq_read(kseq)) >= 0){
                 char* name_x = new char[kseq->name.l];
                 memcpy(name_x, kseq->name.s, kseq->name.l);
                 this->buff[this->buff_len].name = name_x;
                 this->buff[this->buff_len].name_len = kseq->name.l;
-
-                
 
                 char* x = new char[kseq->seq.l];
                 memcpy(x, kseq->seq.s, kseq->seq.l);
@@ -72,9 +76,10 @@ namespace KSR{
                 this->buff_len = this->buff_len + 1;
             }
 
-            if (kseq_read(kseq) < 0){
+            if (ks_stat < 0){
                this->finished = true;
             }
+            return 0;
 
         }
 
@@ -89,6 +94,11 @@ namespace KSR{
         void KSEQ_Reader::open(char* filename){
             this->filename = filename;
             this->fp = gzopen(this->filename, "r");
+            if (this->fp == NULL){
+                cerr << "Could not open " << filename << "." << endl;
+                cerr << "Check the filename and that it is either plain text or gzip compressed." << endl;
+                exit(2);
+            }
             this->kseq = kseq_init(this->fp);
             this->init = true;
         }
@@ -142,7 +152,7 @@ namespace KSR{
                     ksq = *(buff + curr_pos);
                     curr_pos++;
                 }
-                cerr << "Case 1" << endl;
+                //cerr << "Case 1" << endl;
                 return 0;
             }
             else if (!this->finished){
@@ -152,7 +162,7 @@ namespace KSR{
                     ksq = *(buff + curr_pos);         
                     curr_pos++;
                 }
-                cerr << "Case 1" << endl;
+                //cerr << "Case 2" << endl;
                 
                 return 0;
             }
@@ -166,8 +176,8 @@ namespace KSR{
                 int r = read();
                 #pragma omp critical
                 {
-                    num = buff_len + curr_pos;
-                    ksq = this->buff;
+                    num = buff_len - curr_pos;
+                    ksq = this->buff + curr_pos;
                 }
                 return r;
             }
