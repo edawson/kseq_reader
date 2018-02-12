@@ -24,12 +24,12 @@ int main(){
     int kpt_num;
     //int l = g.get_next_buff(kpt, kpt_num);
     //cerr << l << " kpt " << kpt_num << endl;
-    int l = 0;
+    int l = g.get_next_buff(kpt, kpt_num);
     while (l == 0){
-        l = g.get_next_buff(kpt, kpt_num);
         for (int i = 0; i < kpt_num; i++){
             cout << (kpt + i)->name << endl;
         }
+        l = g.get_next_buff(kpt, kpt_num);
     }
     
 
