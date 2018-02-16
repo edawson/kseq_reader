@@ -45,7 +45,7 @@ class KSEQ_Reader{
         int get_next_buff(ksequence_t*& ksq, int& num);
         int get_next_sequence_buffer(vector<string>& seqs);
 
-   // private:
+    private:
         /** Buffer size **/
         int b_size = 1000;
         /** Number of elements in buffer **/
