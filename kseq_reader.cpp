@@ -181,4 +181,17 @@ namespace KSR{
                 }
                 return r;
             }
+
+        int KSEQ_Reader::get_next_sequence_buffer(vector<string>& kvex){
+                int r = read();
+                // #pragma omp critical
+                {
+                    kvex.clear();
+                    //kvex.resize(buff_len);
+                    for (int i = 0; i < buff_len; i++){
+                        kvex.push_back( (this->buff + i)->sequence );
+                    }
+                }
+                return r;
+            }
 }
