@@ -1,4 +1,4 @@
-#include "KSEQ_Reader.hpp"
+#include "kseq_reader.hpp"
 #include <iostream>
 
 using namespace std;
