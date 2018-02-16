@@ -12,11 +12,15 @@ namespace KSR{
         }
 
         KSEQ_Reader::~KSEQ_Reader(){
-            delete [] buff;
-            if (init){
-                kseq_destroy(kseq);
-                gzclose(fp);
+            #pragma omp critical
+            {
+                delete [] buff;
+                if (init){
+                    kseq_destroy(kseq);
+                    gzclose(fp);
+                }
             }
+            
 
         }
 
