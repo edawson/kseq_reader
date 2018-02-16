@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <omp.h>
+#include <vector>
 KSEQ_INIT(gzFile, gzread);
 
 using namespace std;
@@ -42,6 +43,7 @@ class KSEQ_Reader{
         //int next(ksequence_t* ksq);
         int next(ksequence_t& ksq);
         int get_next_buff(ksequence_t*& ksq, int& num);
+        int get_next_sequence_buffer(vector<string>& seqs);
 
    // private:
         /** Buffer size **/
