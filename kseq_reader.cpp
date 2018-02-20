@@ -40,9 +40,10 @@ namespace KSR{
                 this->safe_to_set_buf = false;
                 #pragma omp critical
                 {
-                for (int i = 0; i < b_size; i++){
-                    this->buff[i] = *(new ksequence_t());
-                    }
+                //for (int i = 0; i < b_size; i++){
+                //    this->buff[i] = *(new ksequence_t());
+                //    }
+                this->buff = new ksequence_t[b_size];
                 }
                 #pragma omp atomic write
                 this->curr_pos = 0;
@@ -67,14 +68,16 @@ namespace KSR{
             int ks_stat = 0;
             while (this->buff_len < b_size && 
             (ks_stat = kseq_read(kseq)) >= 0){
-                char* name_x = new char[kseq->name.l];
+                char* name_x = new char[kseq->name.l + 1];
                 memcpy(name_x, kseq->name.s, kseq->name.l);
                 this->buff[this->buff_len].name = name_x;
+                this->buff[this->buff_len].name[kseq->name.l + 1] = '\0';
                 this->buff[this->buff_len].name_len = kseq->name.l;
 
-                char* x = new char[kseq->seq.l];
+                char* x = new char[kseq->seq.l + 1];
                 memcpy(x, kseq->seq.s, kseq->seq.l);
                 this->buff[this->buff_len].sequence = x;
+                this->buff[this->buff_len].sequence[kseq->seq.l + 1] = '\0';
                 this->buff[this->buff_len].length = kseq->seq.l;
                 
                 this->buff_len = this->buff_len + 1;
