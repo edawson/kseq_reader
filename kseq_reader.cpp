@@ -59,6 +59,11 @@ namespace KSR{
                 this->curr_pos = 0;
                 #pragma omp atomic write
                 this->buff_len = 0;
+                #pragma omp critical
+                for (int i = 0; i < buff_len; ++i){
+                    delete (buff + i)->sequence;
+                    delete (buff + i)->name;
+                }
             }
             
             int ks_stat = 0;
@@ -68,12 +73,14 @@ namespace KSR{
                 memcpy(name_x, kseq->name.s, kseq->name.l);
                 this->buff[this->buff_len].name = name_x;
                 this->buff[this->buff_len].name_len = kseq->name.l;
+                this->buff[this->buff_len].name[this->buff[this->buff_len].name_len] = '\0';
 
                 char* x = new char[kseq->seq.l + 1];
                 memcpy(x, kseq->seq.s, kseq->seq.l);
                 this->buff[this->buff_len].sequence = x;
                 this->buff[this->buff_len].length = kseq->seq.l;
-                
+                this->buff[this->buff_len].sequence[this->buff[this->buff_len].length]= '\0';
+
                 this->buff_len = this->buff_len + 1;
             }
 
