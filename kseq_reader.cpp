@@ -36,9 +36,10 @@ namespace KSR{
                 this->safe_to_set_buf = false;
                 #pragma omp critical
                 {
-                for (int i = 0; i < b_size; i++){
-                    this->buff[i] = *(new ksequence_t());
-                    }
+                //for (int i = 0; i < b_size; i++){
+                //    this->buff[i] = *(new ksequence_t());
+                //    }
+                this->buff = new ksequence_t[b_size];
                 }
                 #pragma omp atomic write
                 this->curr_pos = 0;
