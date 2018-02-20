@@ -67,13 +67,11 @@ namespace KSR{
                 char* name_x = new char[kseq->name.l + 1];
                 memcpy(name_x, kseq->name.s, kseq->name.l);
                 this->buff[this->buff_len].name = name_x;
-                this->buff[this->buff_len].name[kseq->name.l + 1] = '\0';
                 this->buff[this->buff_len].name_len = kseq->name.l;
 
                 char* x = new char[kseq->seq.l + 1];
                 memcpy(x, kseq->seq.s, kseq->seq.l);
                 this->buff[this->buff_len].sequence = x;
-                this->buff[this->buff_len].sequence[kseq->seq.l + 1] = '\0';
                 this->buff[this->buff_len].length = kseq->seq.l;
                 
                 this->buff_len = this->buff_len + 1;
