@@ -64,6 +64,8 @@ namespace KSR{
                     delete (buff + i)->sequence;
                     delete (buff + i)->name;
                 }
+                delete [] buff;
+                buff = new ksequence_t[b_size];
             }
             
             int ks_stat = 0;
