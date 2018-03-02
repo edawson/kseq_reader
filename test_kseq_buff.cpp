@@ -12,7 +12,7 @@ int main(){
     string k ("small.fq.gz");
     KSEQ_Reader g;
     g.open(k);
-    int bs = 110;
+    int bs = 100;
     g.buffer_size(bs);
     cout << "Test 2: constructor 2 pass. Bsize: " << g.buffer_size() << endl;
     ksequence_t seq;
