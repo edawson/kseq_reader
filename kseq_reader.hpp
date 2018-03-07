@@ -38,11 +38,14 @@ class KSEQ_Reader{
         void open(char* filename);
         void open(const char* filename);
         void open(string& filename);
+
         void buffer_size(int& bufsize);
         int buffer_size();
+
         //int next(ksequence_t* ksq);
         int next(ksequence_t& ksq);
-        int get_next_buff(ksequence_t*& ksq, int& num);
+        int get_next_buffer(ksequence_t*& ksq, int& num);
+        int get_next_buffer(vector<ksequence_t>& ksq);
         int get_next_sequence_buffer(vector<string>& seqs);
 
     private:
