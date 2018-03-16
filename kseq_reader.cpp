@@ -20,7 +20,9 @@ namespace KSR{
 
     }
 
+
     int KSEQ_Reader::read(){
+
 
         if (finished){
             this->buff_len = 0;
