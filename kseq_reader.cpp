@@ -4,14 +4,20 @@ using namespace std;
 namespace KSR{
     KSEQ_Reader::KSEQ_Reader(){
         this->buff = new ksequence_t[b_size];
+        this->init = true;
     }
 
     KSEQ_Reader::KSEQ_Reader(char* filename){
         this->buff = new ksequence_t[b_size];
+        this->init = true;
         open(filename);
     }
 
     KSEQ_Reader::~KSEQ_Reader(){
+        for (int i = 0; i < b_size; ++i){
+            delete [] buff[i].name;
+            delete [] buff[i].sequence;
+        }
         delete [] buff;
         if (init){
             kseq_destroy(kseq);
@@ -22,11 +28,26 @@ namespace KSR{
 
 
     int KSEQ_Reader::read(){
+        
+        // Reading from a buffer forces it to have predictable size from that point on.
+        #pragma omp atomic write
+        this->safe_to_set_buf = false;
 
+        #pragma omp critical
+        {
+            for (int i = 0; i < buff_len; ++i){
+                delete (buff + i)->sequence;
+                delete (buff + i)->name;
+            }
+        }
+
+
+        #pragma omp atomic write
+        this->curr_pos = 0;
+        #pragma omp atomic write
+        this->buff_len = 0;
 
         if (finished){
-            this->buff_len = 0;
-            this->curr_pos = 0;
             return 1;
         }
         /** If our buffer hasn't been
@@ -34,43 +55,19 @@ namespace KSR{
          * and allocate memory
          **/
         if (!init){
-#pragma omp atomic write
+            #pragma omp atomic write
             this->safe_to_set_buf = false;
-#pragma omp critical
+            //#pragma omp critical
             {
-                //for (int i = 0; i < b_size; i++){
-                //    this->buff[i] = *(new ksequence_t());
-                //    }
+                #pragma omp atomic write
                 this->buff = new ksequence_t[b_size];
-
+                this->init = true;
             }
         }
-#pragma omp atomic write
-        this->curr_pos = 0;
-#pragma omp atomic write
-        this->buff_len = 0;
+        
+        
 
 
-
-
-        /** If our buffer is full,
-         *  reset our variables. We
-         *  might want to flush our
-         *  buffer, too.
-         **/
-        if (buff_len == b_size){
-#pragma omp atomic write
-            this->curr_pos = 0;
-#pragma omp atomic write
-            this->buff_len = 0;
-#pragma omp critical
-            for (int i = 0; i < buff_len; ++i){
-                delete (buff + i)->sequence;
-                delete (buff + i)->name;
-            }
-            delete [] buff;
-            buff = new ksequence_t[b_size];
-        }
 
         int ks_stat = 0;
         while (this->buff_len < b_size && 
@@ -116,14 +113,14 @@ namespace KSR{
             exit(2);
         }
         this->kseq = kseq_init(this->fp);
-        this->init = true;
     }
 
     void KSEQ_Reader::buffer_size(int& bufsize){
         if (safe_to_set_buf){
             this->b_size = bufsize;
             delete [] this->buff;     
-            this->buff = new ksequence_t[b_size];        
+            this->buff = new ksequence_t[b_size];
+            this->init = true;     
         }
         else{
             cerr << "Cannot set buffer size once items are in the buffer" << endl;
