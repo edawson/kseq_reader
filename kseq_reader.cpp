@@ -55,8 +55,6 @@ namespace KSR{
          * and allocate memory
          **/
         if (!init){
-            #pragma omp atomic write
-            this->safe_to_set_buf = false;
             //#pragma omp critical
             {
                 #pragma omp atomic write
